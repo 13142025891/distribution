@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-        <transition :name="transitionName">
+    <transition :name="transitionName">
       <router-view class="view-container"></router-view>
     </transition>
   </div>
@@ -47,6 +47,6 @@ export default {
 .slide-right-enter {
   opacity: 0;
   -webkit-transform: translate3d(100%, 0);
-  transform: translate3d(100%,0);
+  transform: translate3d(100%, 0);
 }
 </style>
