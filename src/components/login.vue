@@ -7,40 +7,16 @@
         <input
           type="text"
           maxlength="20"
-          placeholder="用户名"
+          placeholder="请输入手机号/客户号/登录名"
           v-model="ruleForm.userName"
         >
       </section>
-      <section class="form_wrap">
-        <span class="iconfont icon">&#xe61e;</span>
-        <input
-          type="tel"
-          maxlength="11"
-          placeholder="输入手机号"
-          v-model="ruleForm.phoneNmuber"
-        >
-      </section>
-      <section class="form_wrap verify-wrapper">
-        <span class="iconfont icon">&#xe647;</span>
-        <input
-          type="text"
-          maxlength="8"
-          placeholder="输入验证码"
-          v-model="ruleForm.verify"
-        >
 
-        <button
-          class="button-verify"
-          type="button"
-          @click="getCaptcha"
-          :disabled="codeDisabled"
-        >{{verifyBtn}}</button>
-      </section>
       <section class="form_wrap">
         <span class="iconfont icon">&#xe62f;</span>
         <input
           type="password"
-          maxlength="11"
+          maxlength="20"
           placeholder="输入密码"
           v-model="ruleForm.password"
         >
@@ -57,7 +33,7 @@
     <transition name="fade">
       <div class="errMsg">{{message}}</div>
     </transition>
-    <div class="forget"><router-link to="/">已有账号去登陆!</router-link>
+    <div class="forget">还没有账号？<router-link to="/register">立即注册</router-link>
     </div>
   </div>
 </template>
@@ -67,7 +43,7 @@ import nvLoading from "../common/loading";
 import { API_ROOT } from "../api/config";
 import { MessageBox } from "mint-ui";
 export default {
-  name: "register",
+  name: "login",
   data() {
     return {
       ruleForm: {
@@ -78,7 +54,7 @@ export default {
       },
       verifyBtn: "获取验证码",
       message: "",
-      SignIn: "注册",
+      SignIn: "登录",
       signInBg: false,
       // 定时器
       timer: null,
@@ -96,47 +72,30 @@ export default {
     if (
       /Android|webOS|iPhone|iPod|BlackBerry|IEMobile/i.test(navigator.userAgent)
     ) {
-      this.loginUrl = "http://wx.liangyunkj.com/m/userLogin";
+      this.loginUrl = "http://wx.liangyunkj.com/m/main";
     } else {
-      this.loginUrl = "http://wx.liangyunkj.com/client/login";
+      this.loginUrl = "http://wx.liangyunkj.com/client/main";
     }
   },
   methods: {
     //点击登录调用方法
     submitForm(formName) {
-      this.SignIn = "正在注册~";
+      this.SignIn = "登录中~";
       this.signInBg = true;
-      var name = this.ruleForm.phoneNmuber;
+
       var pass = this.ruleForm.password;
       var userName = this.ruleForm.userName;
-      var verify = this.ruleForm.verify;
-      var pattern = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
+
       if (userName == "" || userName == null) {
-        this.SignIn = "注册";
+        this.SignIn = "登录";
         this.signInBg = false;
         this.message = "请输入用户名";
         setTimeout(() => {
           this.message = "";
         }, 1500);
         return;
-      } else if (name == "" || name == null || !pattern.test(name)) {
-        this.SignIn = "注册";
-        this.signInBg = false;
-        this.message = "请输入正确手机号";
-        setTimeout(() => {
-          this.message = "";
-        }, 1500);
-        return;
-      } else if (verify == "" || verify == null) {
-        this.SignIn = "注册";
-        this.signInBg = false;
-        this.message = "请输入验证码";
-        setTimeout(() => {
-          this.message = "";
-        }, 1500);
-        return;
       } else if (pass == "" || pass == null) {
-        this.SignIn = "注册";
+        this.SignIn = "登录";
         this.signInBg = false;
         this.message = "请输入正确的密码";
         setTimeout(() => {
@@ -145,7 +104,7 @@ export default {
         return;
       }
 
-      let url = "/api/Sapi/Reg/index"; // API_ROOT + "/auth/login";
+      let url = "/api/Sapi/Login/index"; // API_ROOT + "/auth/login";
       let _this = this;
       axios({
         method: "POST",
@@ -154,25 +113,22 @@ export default {
           clienttype: "web"
         },
         data: {
-          mobile: this.ruleForm.phoneNmuber,
           user_pwd: this.ruleForm.password,
-          mobile_verify: this.ruleForm.verify,
-          user_name: this.ruleForm.userName,
-          rel_user: 5796
+          user_name: this.ruleForm.userName
         }
       })
         .then(function(res) {
           let rs = res.data;
-          _this.SignIn = "注册";
+          _this.SignIn = "登录";
           _this.signInBg = false;
           if (rs && rs.status === 1) {
             //sessionStorage.setItem("token", rs.data.token);
             //sessionStorage.setItem("level", 2);
             //_this.$router.push({ path: "/homePage" });
-            alertMesage("注册成功");
             //_this.message = rs.info;
+            window.localStorage.setItem("sid", rs.sid);
             setTimeout(() => {
-              window.location.href=_this.loginUrl;
+              window.location.href = _this.loginUrl;
             }, 1500);
           } else {
             _this.message = rs.info;
@@ -185,70 +141,7 @@ export default {
           console.log(err);
         });
     },
-    getCaptcha() {
-      var name = this.ruleForm.phoneNmuber;
 
-      var pattern = /^[1][3,4,5,6,7,8,9][0-9]{9}$/;
-      if (name == "" || name == null || !pattern.test(name)) {
-        this.message = "请输入正确手机号";
-        setTimeout(() => {
-          this.message = "";
-        }, 1500);
-        return;
-      }
-
-      let url = "/api/Sapi/Code/sendex"; // API_ROOT + "/auth/login";
-      let _this = this;
-      axios({
-        method: "POST",
-        url: url,
-        headers: {
-          clienttype: "pc"
-        },
-        data: {
-          mobile: this.ruleForm.phoneNmuber,
-          type: "register"
-        }
-      })
-        .then(function(res) {
-          _this.setTime();
-          let rs = res.data;
-          _this.SignIn = "注册";
-          _this.signInBg = false;
-          if (rs && rs.status === 1) {
-            _this.message = rs.info;
-            setTimeout(() => {
-              _this.message = "";
-            }, 1500);
-          } else {
-            _this.message = rs.info || "获取短信验证码失败";
-            setTimeout(() => {
-              _this.message = "";
-            }, 1500);
-          }
-        })
-        .catch(function(err) {
-          console.log(err);
-        });
-    },
-    setTime() {
-      if (!this.timer) {
-        this.timer = setInterval(() => {
-          if (this.countdown > 0 && this.countdown <= 60) {
-            this.countdown--;
-            if (this.countdown !== 0) {
-              this.verifyBtn = "重新发送(" + this.countdown + ")";
-            } else {
-              clearInterval(this.timer);
-              this.verifyBtn = "获取验证码";
-              this.countdown = 60;
-              this.timer = null;
-              this.codeDisabled = false;
-            }
-          }
-        }, 1000);
-      }
-    },
     alertMesage() {
       MessageBox("联系客服", "微信号：SuperToutiao");
     }
@@ -349,9 +242,9 @@ export default {
     font-size: 0.3rem;
     color: #fff;
     width: 100%;
-    cursor: pointer;
     text-align: center;
-    a{
+    cursor: pointer;
+    a {
       color: #fff;
     }
   }

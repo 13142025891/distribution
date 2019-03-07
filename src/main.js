@@ -25,19 +25,19 @@ Vue.filter('capitalize', function(value) {
 Vue.config.productionTip = false
     /* eslint-disable no-new */
     // 验证登录状态
-router.beforeEach((to, from, next) => {
-        if (to.meta.requireAuth) {
-            if (sessionStorage.getItem('token')) {
-                next();
-            } else {
-                next({
-                    path: '/'
-                })
-            }
-        } else {
-            next();
-        }
-    })
+    // router.beforeEach((to, from, next) => {
+    //         if (to.meta.requireAuth) {
+    //             if (sessionStorage.getItem('token')) {
+    //                 next();
+    //             } else {
+    //                 next({
+    //                     path: '/'
+    //                 })
+    //             }
+    //         } else {
+    //             next();
+    //         }
+    //     })
     //axios.defaults.baseURL = process.env.API_HOST;
     // 主要拦截token过期和实效时候的状态码，然后返回登录页面
     // axios.interceptors.response.use(
