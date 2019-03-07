@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <div class="register_partner">Nano 合伙人</div>
+    <div class="register_partner">配安合伙人</div>
     <form class="register_input">
       <section class="form_wrap">
         <span class="iconfont icon">&#xe62c;</span>
@@ -12,7 +12,7 @@
       </section>
       <section class="form_wrap verify-wrapper">
         <span class="iconfont icon">&#xe61d;</span>
-        <input type="number" maxlength="11" placeholder="输入验证码" v-model="ruleForm.verify">
+        <input type="text" maxlength="11" placeholder="输入验证码" v-model="ruleForm.verify">
         
         <button
           class="button-verify"
@@ -116,7 +116,7 @@ export default {
         return;
       }
 
-      let url = "http://wx.liangyunkj.com/Sapi/Reg/index"; // API_ROOT + "/auth/login";
+      let url = "/api/Sapi/Reg/index"; // API_ROOT + "/auth/login";
       let _this = this;
       axios({
         method: "POST",
@@ -178,7 +178,7 @@ export default {
         return;
       }
 
-      let url = "/Sapi/Code/sendex"; // API_ROOT + "/auth/login";
+      let url = "/api/Sapi/Code/sendex"; // API_ROOT + "/auth/login";
       let _this = this;
       axios({
         method: "POST",
